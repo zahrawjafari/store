@@ -1,4 +1,4 @@
-import { Link } from "react-router-dom";
+import { Link } from "react-router";
 import { IoIosBicycle } from "react-icons/io";
 import { LuMapPin, LuPhone, LuMail } from "react-icons/lu";
 const Footer = () => {
