@@ -1,107 +1,78 @@
-import { Link, useParams } from "react-router";
-import { useQuery } from "@tanstack/react-query";
-import { IoArrowBack, IoCartOutline } from "react-icons/io5";
-import { getProduct } from "../services/api";
-import { useStore } from "../store/useStore";
-
-function ProductDetail() {
-  const { id } = useParams();
-  const addToCart = useStore((state) => state.addToCart);
-
-  const {
-    data: product,
-    isLoading,
-    isError,
-  } = useQuery({
-    queryKey: ["product", id],
-    queryFn: () => getProduct(id!),
-    enabled: Boolean(id),
-  });
-
-  if (isLoading) {
-    return (
-      <div className="px-4 py-20 text-center text-gray-500">
-        Loading product...
-      </div>
-    );
-  }
-
-  if (isError || !product) {
-    return (
-      <div className="px-4 py-20 text-center">
-        <p className="text-red-600">Could not load this product.</p>
-        <Link to="/products" className="mt-4 inline-block text-green-700">
-          Back to products
-        </Link>
-      </div>
-    );
-  }
-
+import { FaApple, FaGooglePlay } from "react-icons/fa";
+const DeliveryBanner = () => {
   return (
-    <section className="min-h-[60vh] bg-amber-50 px-4 py-10 sm:px-6 lg:px-8">
-      <div className="mx-auto max-w-[1100px]">
-        <Link
-          to="/products"
-          className="mb-8 inline-flex items-center gap-2 text-sm font-semibold text-green-700"
-        >
-          <IoArrowBack />
-          Back to products
-        </Link>
+    <section className="bg-amber-50 px-4 py-12 sm:px-6 lg:px-8">
+      <div className="mx-auto w-full max-w-[1200px]">
+        <div className="relative min-h-[360px] overflow-hidden rounded-3xl bg-[#1F3D2B]">
+          {/* Decorative circles */}
+          <div className="pointer-events-none absolute -right-20 -top-24 h-72 w-72 rounded-full border border-white/10" />
+          <div className="pointer-events-none absolute -right-8 -top-12 h-52 w-52 rounded-full border border-white/10" />
 
-        <div className="grid gap-8 rounded-3xl bg-white p-5 shadow-sm sm:p-8 md:grid-cols-2">
-          <div className="flex min-h-[300px] items-center justify-center rounded-2xl bg-amber-50 p-6">
-            <img
-              src={product.thumbnail}
-              alt={product.title}
-              className="max-h-[350px] w-full object-contain"
-            />
+          <div className="relative z-10 flex min-h-[360px] items-center px-6 py-12 sm:px-10 lg:px-14">
+            <div className="max-w-[570px]">
+              <span className="inline-block rounded-full bg-white/10 px-4 py-2 text-xs font-semibold uppercase tracking-wider text-amber-200">
+                Fast & Fresh Delivery
+              </span>
+
+              <h2 className="mt-5 font-serif text-2xl font-bold leading-tight text-white sm:text-4xl lg:text-5xl">
+                Get fresh groceries in minutes
+              </h2>
+
+              <p className="mt-5 max-w-[520px] text-sm leading-6 text-gray-200 sm:text-base sm:leading-7">
+                Download the InstantMart app for exclusive deals,
+                real-time tracking, and the freshest selection
+                delivered right to your door.
+              </p>
+
+              <div className="mt-8 flex flex-wrap gap-3">
+                <a
+                  href="https://www.apple.com/app-store/"
+                  target="_blank"
+                  rel="noreferrer"
+                  className="flex h-[54px] w-[165px] items-center justify-center gap-3 rounded-xl bg-white px-5 transition hover:bg-gray-100"
+                >
+                  <FaApple className="h-7 w-7 text-[#1F3D2B]" />
+
+                  <div className="text-left">
+                    <p className="text-xs text-gray-500">
+                      Download on the
+                    </p>
+                    <p className="text-base font-bold leading-tight text-[#1F3D2B]">
+                      App Store
+                    </p>
+                  </div>
+                </a>
+
+                <a
+                  href="https://play.google.com/store"
+                  target="_blank"
+                  rel="noreferrer"
+                  className="flex h-[54px] w-[165px] items-center justify-center gap-3 rounded-xl border border-white/80 bg-white/5 px-4 transition hover:bg-white/15"
+                >
+                  <FaGooglePlay className="h-6 w-6 text-white" />
+
+                  <div className="text-left">
+                    <p className="text-xs text-gray-300">
+                      GET IT ON
+                    </p>
+                    <p className="text-base font-bold leading-tight text-white">
+                      Google Play
+                    </p>
+                  </div>
+                </a>
+              </div>
+            </div>
           </div>
 
-          <div className="flex flex-col justify-center">
-            <p className="text-sm capitalize text-green-700">
-              {product.category}
-            </p>
-
-            <h1 className="mt-3 text-3xl font-bold text-gray-900">
-              {product.title}
-            </h1>
-
-            {product.rating !== undefined && (
-              <p className="mt-3 text-sm text-amber-600">
-                ★ {product.rating.toFixed(1)} / 5
-              </p>
-            )}
-
-            <p className="mt-5 leading-7 text-gray-600">
-              {product.description}
-            </p>
-
-            <p className="mt-6 text-3xl font-extrabold text-green-700">
-              ${product.price.toFixed(2)}
-            </p>
-
-            {product.stock !== undefined && (
-              <p className="mt-2 text-sm text-gray-500">
-                {product.stock > 0
-                  ? `${product.stock} in stock`
-                  : "Out of stock"}
-              </p>
-            )}
-
-            <button
-              type="button"
-              disabled={product.stock === 0}
-              onClick={() => addToCart(product)}
-              className="mt-6 flex items-center justify-center gap-2 rounded-xl bg-green-600 px-6 py-3 font-semibold text-white transition hover:bg-green-700 disabled:cursor-not-allowed disabled:bg-gray-300"
-            >
-              <IoCartOutline size={21} />
-              Add to Cart
-            </button>
-          </div>
+          <img
+            src="/images/delivery_truck-BvY4lSkI.svg"
+            alt="Fresh grocery delivery truck"
+            loading="lazy"
+            className="pointer-events-none absolute bottom-[-35px] right-[20px] hidden h-[390px] w-[500px] object-contain lg:block"
+          />
         </div>
       </div>
     </section>
   );
-}
-
-export default ProductDetail;
+};
+export default DeliveryBanner;
