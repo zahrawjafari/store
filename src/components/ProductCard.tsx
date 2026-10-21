@@ -11,7 +11,6 @@ type ProductCardProps = {
   image: string;
   onAddToCart: () => void;
 };
-
 const ProductCard = ({
   name,
   price,
@@ -28,7 +27,6 @@ const ProductCard = ({
       <div className="absolute left-3 top-3 z-10 rounded-md bg-orange-100 px-2 py-1 text-xs font-bold text-orange-600">
         {discount} OFF
       </div>
-
       <div className="flex h-[190px] w-full items-center justify-center overflow-hidden bg-white">
         <img
           src={image}
@@ -37,15 +35,12 @@ const ProductCard = ({
           onError={(event) => {
             event.currentTarget.style.visibility = "hidden";
           }}
-          className="h-[140px] w-[140px] object-contain transition-transform duration-300 group-hover:scale-105"
-        />
+          className="h-[140px] w-[140px] object-contain transition-transform duration-300 group-hover:scale-105"/>
       </div>
-
       <div className="border-t border-gray-100 px-4 py-4">
         <h3 className="line-clamp-1 text-sm font-semibold text-gray-900">
           {name}
         </h3>
-
         <div className="mt-2 flex items-center gap-1">
           <span className="text-sm text-yellow-500">★</span>
           <span className="text-xs font-medium text-gray-700">
@@ -55,7 +50,6 @@ const ProductCard = ({
             ({reviews})
           </span>
         </div>
-
         <div className="mt-3 flex items-end justify-between gap-2">
           <div className="flex min-w-0 flex-wrap items-baseline gap-2">
             <span className="text-base font-bold text-gray-900 sm:text-lg">
@@ -69,13 +63,11 @@ const ProductCard = ({
               {oldPrice}
             </span>
           </div>
-
           <button
             type="button"
             onClick={onAddToCart}
             aria-label={`Add ${name} to cart`}
-            className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-amber-500 text-xl font-medium leading-none text-white transition hover:scale-105 hover:bg-amber-600"
-          >
+            className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-amber-500 text-xl font-medium leading-none text-white transition hover:scale-105 hover:bg-amber-600">
             +
           </button>
         </div>
@@ -83,5 +75,4 @@ const ProductCard = ({
     </div>
   );
 };
-
 export default ProductCard;

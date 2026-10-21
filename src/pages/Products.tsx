@@ -7,7 +7,6 @@ import {
   LuHeart,
   LuStar,
 } from "react-icons/lu";
-
 const products = [
   {
     id: 1,
@@ -99,26 +98,21 @@ const categories = [
   "Beverages",
   "Snacks",
 ];
-
 function Products() {
   const [search, setSearch] = useState("");
   const [category, setCategory] = useState("All Products");
   const [sort, setSort] = useState("featured");
   const [favorites, setFavorites] = useState<number[]>([]);
   const [cartCount, setCartCount] = useState(0);
-
   const filteredProducts = useMemo(() => {
     let result = products.filter((product) => {
       const matchesSearch = product.name
         .toLowerCase()
         .includes(search.toLowerCase());
-
       const matchesCategory =
         category === "All Products" || product.category === category;
-
       return matchesSearch && matchesCategory;
     });
-
     if (sort === "price-low") {
       result = [...result].sort((a, b) => a.price - b.price);
     } else if (sort === "price-high") {
@@ -126,10 +120,8 @@ function Products() {
     } else if (sort === "rating") {
       result = [...result].sort((a, b) => b.rating - a.rating);
     }
-
     return result;
   }, [search, category, sort]);
-
   const toggleFavorite = (id: number) => {
     setFavorites((current) =>
       current.includes(id)
@@ -137,7 +129,6 @@ function Products() {
         : [...current, id],
     );
   };
-
   return (
     <main className="min-h-screen bg-amber-50 px-4 pb-16 pt-8 sm:px-6 lg:px-8">
       <div className="mx-auto max-w-[1200px]">
@@ -157,7 +148,6 @@ function Products() {
             Cart items: {cartCount}
           </div>
         </div>
-
         <div className="mb-7 flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
           <div>
             <h2 className="text-2xl font-bold text-gray-900">Our Products</h2>
@@ -165,7 +155,6 @@ function Products() {
               {filteredProducts.length} products available
             </p>
           </div>
-
           <div className="flex flex-col gap-3 sm:flex-row">
             <div className="flex h-12 items-center gap-2 rounded-xl border border-gray-200 bg-white px-4 sm:w-64">
               <LuSearch className="shrink-0 text-gray-400" size={19} />
@@ -173,17 +162,14 @@ function Products() {
                 value={search}
                 onChange={(e) => setSearch(e.target.value)}
                 placeholder="Search products..."
-                className="w-full bg-transparent text-sm outline-none"
-              />
+                className="w-full bg-transparent text-sm outline-none"/>
             </div>
-
             <div className="flex h-12 items-center gap-2 rounded-xl border border-gray-200 bg-white px-3">
               <LuSlidersHorizontal size={18} className="text-gray-500" />
               <select
                 value={sort}
                 onChange={(e) => setSort(e.target.value)}
-                className="bg-transparent text-sm outline-none"
-              >
+                className="bg-transparent text-sm outline-none">
                 <option value="featured">Featured</option>
                 <option value="price-low">Price: Low to High</option>
                 <option value="price-high">Price: High to Low</option>
@@ -192,7 +178,6 @@ function Products() {
             </div>
           </div>
         </div>
-
         <div className="mb-8 flex gap-2 overflow-x-auto pb-2">
           {categories.map((item) => (
             <button
@@ -203,13 +188,11 @@ function Products() {
                 category === item
                   ? "bg-[#1F3D2B] text-white"
                   : "border border-gray-200 bg-white text-gray-600 hover:border-[#1F3D2B] hover:text-[#1F3D2B]"
-              }`}
-            >
+              }`}>
               {item}
             </button>
           ))}
         </div>
-
         {filteredProducts.length > 0 ? (
           <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
             {filteredProducts.map((product) => {
@@ -217,17 +200,14 @@ function Products() {
               const discount = Math.round(
                 ((product.oldPrice - product.price) / product.oldPrice) * 100,
               );
-
               return (
                 <article
                   key={product.id}
-                  className="group overflow-hidden rounded-2xl border border-gray-100 bg-white transition duration-300 hover:-translate-y-1 hover:shadow-lg"
-                >
+                  className="group overflow-hidden rounded-2xl border border-gray-100 bg-white transition duration-300 hover:-translate-y-1 hover:shadow-lg">
                   <div className="relative flex h-52 items-center justify-center bg-white p-5">
                     <span className="absolute left-3 top-3 rounded-lg bg-orange-100 px-2.5 py-1 text-xs font-bold text-orange-700">
                       -{discount}%
                     </span>
-
                     <button
                       type="button"
                       aria-label="Toggle favorite"
@@ -236,14 +216,11 @@ function Products() {
                         isFavorite
                           ? "border-red-100 bg-red-50 text-red-500"
                           : "border-gray-100 bg-white text-gray-500 hover:text-red-500"
-                      }`}
-                    >
+                      }`}>
                       <LuHeart
                         size={18}
-                        fill={isFavorite ? "currentColor" : "none"}
-                      />
+                        fill={isFavorite ? "currentColor" : "none"}/>
                     </button>
-
                     <img
                       src={product.image}
                       alt={product.name}
@@ -251,19 +228,16 @@ function Products() {
                       className="h-36 w-36 object-contain transition duration-300 group-hover:scale-105"
                     />
                   </div>
-
                   <div className="border-t border-gray-100 p-4">
                     <p className="text-xs text-gray-400">{product.category}</p>
                     <h3 className="mt-1 truncate font-semibold text-gray-900">
                       {product.name}
                     </h3>
-
                     <div className="mt-2 flex items-center gap-1.5">
                       <LuStar
                         size={15}
                         fill="#F59E0B"
-                        className="text-amber-500"
-                      />
+                        className="text-amber-500"/>
                       <span className="text-sm font-medium text-gray-700">
                         {product.rating}
                       </span>
@@ -271,7 +245,6 @@ function Products() {
                         Customer rating
                       </span>
                     </div>
-
                     <div className="mt-4 flex items-center justify-between gap-2">
                       <div>
                         <span className="text-lg font-bold text-[#1F3D2B]">
@@ -284,13 +257,11 @@ function Products() {
                           per {product.unit}
                         </p>
                       </div>
-
                       <button
                         type="button"
                         onClick={() => setCartCount((count) => count + 1)}
                         className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-[#1F3D2B] text-white transition hover:bg-[#163021]"
-                        aria-label={`Add ${product.name} to cart`}
-                      >
+                        aria-label={`Add ${product.name} to cart`}>
                         <LuShoppingCart size={18} />
                       </button>
                     </div>
@@ -314,18 +285,15 @@ function Products() {
                 setSearch("");
                 setCategory("All Products");
               }}
-              className="mt-5 rounded-full bg-[#1F3D2B] px-5 py-2.5 text-sm font-semibold text-white"
-            >
+              className="mt-5 rounded-full bg-[#1F3D2B] px-5 py-2.5 text-sm font-semibold text-white">
               Clear filters
             </button>
           </div>
         )}
-
         <div className="mt-12 flex justify-center">
           <Link
             to="/"
-            className="rounded-full border border-[#1F3D2B] px-6 py-3 text-sm font-semibold text-[#1F3D2B] transition hover:bg-[#1F3D2B] hover:text-white"
-          >
+            className="rounded-full border border-[#1F3D2B] px-6 py-3 text-sm font-semibold text-[#1F3D2B] transition hover:bg-[#1F3D2B] hover:text-white">
             Back to Home
           </Link>
         </div>
@@ -333,5 +301,4 @@ function Products() {
     </main>
   );
 }
-
 export default Products;

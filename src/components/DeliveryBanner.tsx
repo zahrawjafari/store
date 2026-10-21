@@ -21,8 +21,7 @@ const DeliveryBanner = () => {
                   href="https://www.apple.com/app-store/"
                   target="_blank"
                   rel="noreferrer"
-                  className="flex h-[54px] w-[165px] items-center justify-center gap-3 rounded-xl bg-white px-5 transition hover:bg-gray-100"
-                >
+                  className="flex h-[54px] w-[165px] items-center justify-center gap-3 rounded-xl bg-white px-5 transition hover:bg-gray-100">
                   <div className="text-center">
                     <p className="text-base font-bold leading-tight text-[#1F3D2B]">
                       App Store
@@ -33,8 +32,7 @@ const DeliveryBanner = () => {
                   href="https://play.google.com/store"
                   target="_blank"
                   rel="noreferrer"
-                  className="flex h-[54px] w-[165px] items-center justify-center gap-3 rounded-xl border border-white/80 bg-white/5 px-4 transition hover:bg-white/15"
-                >
+                  className="flex h-[54px] w-[165px] items-center justify-center gap-3 rounded-xl border border-white/80 bg-white/5 px-4 transition hover:bg-white/15">
                   <div className="text-center">
                     <p className="text-base font-bold leading-tight text-white">
                       Google Play
@@ -44,13 +42,11 @@ const DeliveryBanner = () => {
               </div>
             </div>
           </div>
-
           <img
             src="/images/delivery_truck-BvY4lSkI.svg"
             alt="Fresh grocery delivery truck"
             loading="lazy"
-            className="pointer-events-none absolute bottom-[-35px] right-[20px] hidden h-[390px] w-[500px] object-contain lg:block"
-          />
+            className="pointer-events-none absolute bottom-[-35px] right-[20px] hidden h-[390px] w-[500px] object-contain lg:block"/>
         </div>
       </div>
     </section>

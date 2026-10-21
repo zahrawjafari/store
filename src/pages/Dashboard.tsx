@@ -202,7 +202,6 @@ const products = [
     image: "/images/pjt1y6xdo46tluemhf0o.png",
   },
 ];
-
 const categories = [
   "All Categories",
   "Fruits & Vegetables",
@@ -216,43 +215,35 @@ const categories = [
   "Baby Care",
   "Dairy & Eggs",
 ];
-
 function Dashboard() {
   const [selectedCategory, setSelectedCategory] = useState("All Categories");
   const [search, setSearch] = useState("");
   const [sort, setSort] = useState("Newest");
   const [cart, setCart] = useState<Record<number, number>>({});
   const [favorites, setFavorites] = useState<number[]>([]);
-
   const filteredProducts = useMemo(() => {
     let result = products.filter((product) => {
       const matchesCategory =
         selectedCategory === "All Categories" ||
         product.category === selectedCategory;
-
       const matchesSearch = product.name
         .toLowerCase()
         .includes(search.toLowerCase());
-
       return matchesCategory && matchesSearch;
     });
-
     if (sort === "Price: Low to High") {
       result = [...result].sort((a, b) => a.price - b.price);
     } else if (sort === "Price: High to Low") {
       result = [...result].sort((a, b) => b.price - a.price);
     }
-
     return result;
   }, [selectedCategory, search, sort]);
-
   function addToCart(id: number) {
     setCart((previous) => ({
       ...previous,
       [id]: (previous[id] || 0) + 1,
     }));
   }
-
   function toggleFavorite(id: number) {
     setFavorites((previous) =>
       previous.includes(id)
@@ -260,7 +251,6 @@ function Dashboard() {
         : [...previous, id],
     );
   }
-
   return (
     <div className="min-h-screen bg-[#FAFAF7] text-[#252820]">
       <div className="border-b border-gray-200 bg-[#202020] px-5 py-3 text-sm text-white">
@@ -274,7 +264,6 @@ function Dashboard() {
           </a>
         </div>
       </div>
-
       <header className="sticky top-0 z-20 border-b border-gray-100 bg-white">
         <div className="mx-auto flex max-w-[1400px] flex-wrap items-center justify-between gap-4 px-5 py-4">
           <Link to="/" className="flex items-center gap-3">
@@ -283,7 +272,6 @@ function Dashboard() {
               InstantMart
             </span>
           </Link>
-
           <nav className="hidden items-center gap-7 text-sm md:flex">
             <Link to="/" className="hover:text-amber-600">
               Home
@@ -298,7 +286,6 @@ function Dashboard() {
               Dashboard
             </Link>
           </nav>
-
           <div className="flex min-w-0 flex-1 items-center gap-3 md:max-w-[370px]">
             <div className="flex min-w-0 flex-1 items-center gap-2 rounded-full border border-gray-200 bg-[#FAFAF7] px-4 py-3">
               <LuSearch size={18} className="shrink-0 text-gray-500" />
@@ -306,15 +293,12 @@ function Dashboard() {
                 value={search}
                 onChange={(event) => setSearch(event.target.value)}
                 placeholder="Search for groceries..."
-                className="w-full min-w-0 bg-transparent text-sm outline-none"
-              />
+                className="w-full min-w-0 bg-transparent text-sm outline-none"/>
             </div>
-
             <button
               type="button"
               aria-label="Shopping cart"
-              className="relative rounded-full p-2 hover:bg-gray-100"
-            >
+              className="relative rounded-full p-2 hover:bg-gray-100">
               <LuShoppingCart size={22} />
               {Object.values(cart).reduce((sum, count) => sum + count, 0) >
                 0 && (
@@ -323,17 +307,14 @@ function Dashboard() {
                 </span>
               )}
             </button>
-
             <Link
               to="/"
-              className="rounded-full bg-[#252525] px-4 py-2.5 text-sm font-medium text-white"
-            >
+              className="rounded-full bg-[#252525] px-4 py-2.5 text-sm font-medium text-white">
               Sign In
             </Link>
           </div>
         </div>
       </header>
-
       <main className="mx-auto max-w-[1400px] px-5 py-6">
         <div className="mb-8 flex items-center gap-2 text-sm text-gray-500">
           <Link to="/" aria-label="Home">
@@ -342,11 +323,9 @@ function Dashboard() {
           <span>/</span>
           <span className="text-gray-800">Dashboard</span>
         </div>
-
         <div className="grid grid-cols-1 items-start gap-8 lg:grid-cols-[250px_minmax(0,1fr)]">
           <aside className="rounded-2xl border border-gray-100 bg-white p-5">
             <h2 className="mb-4 font-semibold">Categories</h2>
-
             <div className="space-y-1">
               {categories.map((category) => (
                 <button
@@ -357,28 +336,23 @@ function Dashboard() {
                     selectedCategory === category
                       ? "bg-[#252525] font-medium text-white"
                       : "text-gray-600 hover:bg-gray-100"
-                  }`}
-                >
+                  }`}>
                   {category}
                 </button>
               ))}
             </div>
-
             <div className="mt-7 border-t border-gray-100 pt-5">
               <h3 className="mb-3 font-semibold">Price Range</h3>
               <p className="text-sm text-gray-500">
                 Choose a category to filter products.
               </p>
             </div>
-
             <Link
               to="/"
-              className="mt-6 block rounded-xl border border-gray-200 px-4 py-3 text-center text-sm hover:bg-gray-50"
-            >
+              className="mt-6 block rounded-xl border border-gray-200 px-4 py-3 text-center text-sm hover:bg-gray-50">
               Back to Home
             </Link>
           </aside>
-
           <section className="min-w-0">
             <div className="mb-6 flex flex-wrap items-center justify-between gap-4">
               <div>
@@ -387,14 +361,12 @@ function Dashboard() {
                   {filteredProducts.length} products found
                 </p>
               </div>
-
               <label className="flex items-center gap-2 rounded-xl border border-gray-200 bg-white px-3 py-2.5 text-sm">
                 <span className="text-gray-500">Sort:</span>
                 <select
                   value={sort}
                   onChange={(event) => setSort(event.target.value)}
-                  className="max-w-[150px] bg-transparent outline-none"
-                >
+                  className="max-w-[150px] bg-transparent outline-none">
                   <option>Newest</option>
                   <option>Price: Low to High</option>
                   <option>Price: High to Low</option>
@@ -402,7 +374,6 @@ function Dashboard() {
                 <LuChevronDown size={15} />
               </label>
             </div>
-
             {filteredProducts.length === 0 ? (
               <div className="rounded-2xl bg-white p-10 text-center text-gray-500">
                 No products found.
@@ -412,12 +383,10 @@ function Dashboard() {
                 {filteredProducts.map((product) => (
                   <article
                     key={product.id}
-                    className="group relative min-w-0 rounded-2xl border border-gray-100 bg-white p-3 transition hover:shadow-md sm:p-4"
-                  >
+                    className="group relative min-w-0 rounded-2xl border border-gray-100 bg-white p-3 transition hover:shadow-md sm:p-4">
                     <span className="absolute left-3 top-3 z-10 rounded-full bg-[#C87555] px-2 py-1 text-[10px] font-semibold text-white">
                       {product.discount}
                     </span>
-
                     <button
                       type="button"
                       onClick={() => toggleFavorite(product.id)}
@@ -433,7 +402,6 @@ function Dashboard() {
                         }
                       />
                     </button>
-
                     <div className="flex h-36 items-center justify-center sm:h-44">
                       <img
                         src={product.image}
@@ -444,11 +412,9 @@ function Dashboard() {
                         }}
                       />
                     </div>
-
                     <h2 className="mt-3 truncate text-sm font-medium">
                       {product.name}
                     </h2>
-
                     <p className="mt-2 flex items-center gap-1 text-xs text-gray-500">
                       <span className="text-amber-500">★</span>
                       {product.rating}
@@ -464,7 +430,6 @@ function Dashboard() {
                           ${product.oldPrice.toFixed(1)}
                         </p>
                       </div>
-
                       <div className="flex shrink-0 items-center gap-1">
                         {cart[product.id] > 0 && (
                           <>
@@ -480,14 +445,12 @@ function Dashboard() {
                                 }))
                               }
                               className="rounded-full border border-gray-200 p-1.5"
-                              aria-label="Decrease quantity"
-                            >
+                              aria-label="Decrease quantity">
                               <LuMinus size={13} />
                             </button>
                             <span className="text-xs">{cart[product.id]}</span>
                           </>
                         )}
-
                         <button
                           type="button"
                           onClick={() => addToCart(product.id)}
@@ -508,5 +471,4 @@ function Dashboard() {
     </div>
   );
 }
-
 export default Dashboard;

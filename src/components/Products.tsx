@@ -123,10 +123,8 @@ const products = [
     numericPrice: 140,
   },
 ];
-
 function Products() {
   const addToCart = useStore((state) => state.addToCart);
-
   const handleAddToCart = (item: (typeof products)[number]) => {
     const product: Product = {
       id: item.id,
@@ -138,10 +136,8 @@ function Products() {
       stock: 100,
       thumbnail: item.image,
     };
-
     addToCart(product);
   };
-
   return (
     <section className="bg-amber-50 px-4 py-12 sm:px-6 lg:px-8">
       <div className="mx-auto w-full max-w-[1200px]">
@@ -154,18 +150,15 @@ function Products() {
               Top-rated products this season
             </p>
           </div>
-
           <button
             type="button"
             onClick={() => {
               window.location.href = "/products";
             }}
-            className="hidden text-sm font-semibold text-amber-600 transition hover:text-amber-700 sm:block"
-          >
+            className="hidden text-sm font-semibold text-amber-600 transition hover:text-amber-700 sm:block">
             View All
           </button>
         </div>
-
         <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 sm:gap-5 lg:grid-cols-5 lg:gap-6">
           {products.map((product) => (
             <ProductCard
@@ -187,5 +180,4 @@ function Products() {
     </section>
   );
 }
-
 export default Products;

@@ -3,7 +3,6 @@ import Categories from "../components/Categories";
 import Products from "../components/Products";
 import DeliveryBanner from "../components/DeliveryBanner";
 import Newsletter from "../components/Newsletter";
-
 function Home() {
   return (
     <>
@@ -15,5 +14,4 @@ function Home() {
     </>
   );
 }
-
 export default Home;
