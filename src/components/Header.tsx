@@ -31,20 +31,49 @@ const Header = () => {
   const [cart, setCart] = useState<Record<string, number>>({});
   const [products, setProducts] = useState<Product[]>([]);
   const [cartOpen, setCartOpen] = useState(false);
+  const [signInOpen, setSignInOpen] = useState(false);
   const [search, setSearch] = useState("");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
   const navigate = useNavigate();
 
   const readCart = () => {
     try {
       const savedCart = localStorage.getItem(CART_KEY);
-      setCart(savedCart ? JSON.parse(savedCart) : {});
+      const parsedCart: unknown = savedCart ? JSON.parse(savedCart) : {};
+
+      if (
+        parsedCart &&
+        typeof parsedCart === "object" &&
+        !Array.isArray(parsedCart)
+      ) {
+        const validCart: Record<string, number> = {};
+
+        Object.entries(parsedCart).forEach(([id, quantity]) => {
+          if (
+            typeof quantity === "number" &&
+            Number.isFinite(quantity) &&
+            quantity > 0
+          ) {
+            validCart[id] = quantity;
+          }
+        });
+
+        setCart(validCart);
+      } else {
+        setCart({});
+      }
     } catch {
       setCart({});
     }
 
     try {
       const savedProducts = localStorage.getItem(PRODUCTS_KEY);
-      setProducts(savedProducts ? JSON.parse(savedProducts) : []);
+      const parsedProducts: unknown = savedProducts
+        ? JSON.parse(savedProducts)
+        : [];
+
+      setProducts(Array.isArray(parsedProducts) ? parsedProducts : []);
     } catch {
       setProducts([]);
     }
@@ -67,9 +96,13 @@ const Header = () => {
   }, []);
 
   const saveCart = (nextCart: Record<string, number>) => {
-    setCart(nextCart);
-    localStorage.setItem(CART_KEY, JSON.stringify(nextCart));
-    window.dispatchEvent(new Event("instantmart-cart-updated"));
+    try {
+      localStorage.setItem(CART_KEY, JSON.stringify(nextCart));
+      setCart(nextCart);
+      window.dispatchEvent(new Event("instantmart-cart-updated"));
+    } catch (error) {
+      console.error("Could not save cart:", error);
+    }
   };
 
   const changeQuantity = (id: string, amount: number) => {
@@ -117,6 +150,14 @@ const Header = () => {
     navigate(
       query ? `/dashboard?search=${encodeURIComponent(query)}` : "/dashboard",
     );
+  };
+
+  const handleSignIn = (event: React.FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+
+    // این فرم فعلاً فقط روی همان صفحه باز می‌شود.
+    // برای ورود واقعی باید به سیستم احراز هویت پروژه متصل شود.
+    console.log("Sign in submitted", { email });
   };
 
   return (
@@ -178,7 +219,10 @@ const Header = () => {
           <div className="flex items-center gap-4">
             <button
               type="button"
-              onClick={() => setCartOpen(true)}
+              onClick={() => {
+                setCartOpen(true);
+                setSignInOpen(false);
+              }}
               aria-label="Open shopping cart"
               className="relative text-gray-600 hover:text-orange-400"
             >
@@ -190,7 +234,10 @@ const Header = () => {
 
             <button
               type="button"
-              onClick={() => navigate("/signin")}
+              onClick={() => {
+                setSignInOpen(true);
+                setCartOpen(false);
+              }}
               className="flex h-[36px] items-center justify-center rounded-2xl bg-green-900 px-3 text-white hover:bg-green-800 sm:px-5"
             >
               <CiUser size={19} />
@@ -211,7 +258,12 @@ const Header = () => {
             className="absolute inset-0 h-full w-full bg-black/30"
           />
 
-          <aside className="absolute right-0 top-0 flex h-screen w-full max-w-[420px] flex-col bg-white shadow-2xl">
+          <aside
+            role="dialog"
+            aria-modal="true"
+            aria-label="Shopping Cart"
+            className="absolute right-0 top-0 flex h-screen w-full max-w-[420px] flex-col bg-white shadow-2xl"
+          >
             <div className="flex items-center justify-between border-b px-5 py-4">
               <div>
                 <h2 className="text-xl font-bold text-gray-900">
@@ -334,10 +386,7 @@ const Header = () => {
               <div className="flex gap-3">
                 <button
                   type="button"
-                  onClick={() => {
-                    setCartOpen(false);
-                    navigate("/dashboard");
-                  }}
+                  onClick={() => setCartOpen(false)}
                   className="flex-1 rounded-xl border border-green-800 px-3 py-3 text-sm font-semibold text-green-800 transition hover:bg-green-50"
                 >
                   Continue Shopping
@@ -345,10 +394,7 @@ const Header = () => {
 
                 <button
                   type="button"
-                  onClick={() => {
-                    setCartOpen(false);
-                    navigate("/checkout");
-                  }}
+                  onClick={() => setCartOpen(false)}
                   disabled={displayedCount === 0}
                   className="flex-1 rounded-xl bg-green-900 px-3 py-3 text-sm font-semibold text-white transition hover:bg-green-800 disabled:cursor-not-allowed disabled:opacity-50"
                 >
@@ -357,6 +403,81 @@ const Header = () => {
               </div>
             </div>
           </aside>
+        </div>
+      )}
+
+      {signInOpen && (
+        <div className="fixed inset-0 z-[70] flex items-center justify-center p-4">
+          <button
+            type="button"
+            aria-label="Close sign in"
+            onClick={() => setSignInOpen(false)}
+            className="absolute inset-0 bg-black/30"
+          />
+
+          <section
+            role="dialog"
+            aria-modal="true"
+            aria-label="Sign In"
+            className="relative z-10 w-full max-w-[400px] rounded-2xl bg-white p-6 shadow-2xl"
+          >
+            <div className="mb-5 flex items-center justify-between">
+              <h2 className="text-xl font-bold text-gray-900">Sign In</h2>
+              <button
+                type="button"
+                onClick={() => setSignInOpen(false)}
+                aria-label="Close sign in"
+                className="text-2xl text-gray-500 hover:text-gray-900"
+              >
+                ×
+              </button>
+            </div>
+
+            <form onSubmit={handleSignIn} className="space-y-4">
+              <div>
+                <label
+                  htmlFor="signin-email"
+                  className="mb-1 block text-sm font-medium text-gray-700"
+                >
+                  Email
+                </label>
+                <input
+                  id="signin-email"
+                  type="email"
+                  value={email}
+                  onChange={(event) => setEmail(event.target.value)}
+                  required
+                  className="w-full rounded-xl border border-gray-300 px-3 py-2 outline-none focus:border-green-800"
+                  placeholder="Enter your email"
+                />
+              </div>
+
+              <div>
+                <label
+                  htmlFor="signin-password"
+                  className="mb-1 block text-sm font-medium text-gray-700"
+                >
+                  Password
+                </label>
+                <input
+                  id="signin-password"
+                  type="password"
+                  value={password}
+                  onChange={(event) => setPassword(event.target.value)}
+                  required
+                  className="w-full rounded-xl border border-gray-300 px-3 py-2 outline-none focus:border-green-800"
+                  placeholder="Enter your password"
+                />
+              </div>
+
+              <button
+                type="submit"
+                className="w-full rounded-xl bg-green-900 px-4 py-3 font-semibold text-white transition hover:bg-green-800"
+              >
+                Sign In
+              </button>
+            </form>
+          </section>
         </div>
       )}
     </>
