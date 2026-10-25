@@ -8,7 +8,6 @@ import {
   LuChevronDown,
 } from "react-icons/lu";
 
-// محصولات
 const products = [
   {
     id: 1,
@@ -103,7 +102,7 @@ const products = [
   {
     id: 10,
     name: "Barley 1kg",
-    category: "pantry staples",
+    category: "Pantry Staples",
     price: 140,
     oldPrice: 150,
     rating: 4.5,
@@ -113,7 +112,7 @@ const products = [
   {
     id: 11,
     name: "Amul Milk 1L",
-    category: "dairy eggs",
+    category: "Dairy & Eggs",
     price: 55,
     oldPrice: 60,
     rating: 4.5,
@@ -123,7 +122,7 @@ const products = [
   {
     id: 12,
     name: "Wheat Flour 5kg",
-    category: "pantry staples",
+    category: "Pantry Staples",
     price: 230,
     oldPrice: 250,
     rating: 4.5,
@@ -133,7 +132,7 @@ const products = [
   {
     id: 13,
     name: "Tomato 1 kg",
-    category: "fruits vegetables",
+    category: "Fruits & Vegetables",
     price: 28,
     oldPrice: 30,
     rating: 4.5,
@@ -143,7 +142,7 @@ const products = [
   {
     id: 14,
     name: "Paneer 200g",
-    category: "dairy eggs",
+    category: "Dairy & Eggs",
     price: 85,
     oldPrice: 90,
     rating: 4.5,
@@ -153,7 +152,7 @@ const products = [
   {
     id: 15,
     name: "Orange 1 kg",
-    category: "fruits vegetables",
+    category: "Fruits & Vegetables",
     price: 75,
     oldPrice: 80,
     rating: 4.5,
@@ -163,7 +162,7 @@ const products = [
   {
     id: 16,
     name: "Carrot 500g",
-    category: "fruits vegetables",
+    category: "Fruits & Vegetables",
     price: 44,
     oldPrice: 50,
     rating: 4.5,
@@ -173,7 +172,7 @@ const products = [
   {
     id: 17,
     name: "Brown Rice 1kg",
-    category: "pantry staples",
+    category: "Pantry Staples",
     price: 110,
     oldPrice: 120,
     rating: 4.5,
@@ -183,7 +182,7 @@ const products = [
   {
     id: 18,
     name: "Brown Bread 400g",
-    category: "bakery",
+    category: "Bakery",
     price: 35,
     oldPrice: 40,
     rating: 4.5,
@@ -193,7 +192,7 @@ const products = [
   {
     id: 19,
     name: "Apple 1 k",
-    category: "fruits vegetables",
+    category: "Fruits & Vegetables",
     price: 90,
     oldPrice: 100,
     rating: 4.5,
@@ -216,13 +215,14 @@ const categories = [
   "Dairy & Eggs",
 ];
 
+type Cart = Record<number, number>;
+
 function Dashboard() {
-  const [selectedCategory, setSelectedCategory] =
-    useState("All Categories");
+  const [selectedCategory, setSelectedCategory] = useState("All Categories");
   const [search, setSearch] = useState("");
   const [sort, setSort] = useState("Newest");
 
-  const [cart, setCart] = useState<Record<number, number>>(() => {
+  const [cart, setCart] = useState<Cart>(() => {
     try {
       const savedCart = localStorage.getItem("instantmart-cart");
       return savedCart ? JSON.parse(savedCart) : {};
@@ -233,7 +233,23 @@ function Dashboard() {
 
   const [favorites, setFavorites] = useState<number[]>([]);
 
-  // ذخیره سبد خرید و اطلاع دادن به هدر ثابت
+  // ذخیره محصولات برای نمایش نام، عکس و قیمت در پنل سبد خرید
+  useEffect(() => {
+    localStorage.setItem(
+      "instantmart-products",
+      JSON.stringify(
+        products.map((product) => ({
+          id: product.id,
+          title: product.name,
+          name: product.name,
+          price: product.price,
+          image: product.image,
+        })),
+      ),
+    );
+  }, []);
+
+  // ذخیره سبد خرید و به‌روزرسانی عدد آیکون هدر
   useEffect(() => {
     localStorage.setItem("instantmart-cart", JSON.stringify(cart));
     window.dispatchEvent(new Event("instantmart-cart-updated"));
@@ -243,8 +259,7 @@ function Dashboard() {
     let result = products.filter((product) => {
       const matchesCategory =
         selectedCategory === "All Categories" ||
-        product.category.toLowerCase() ===
-          selectedCategory.toLowerCase();
+        product.category.toLowerCase() === selectedCategory.toLowerCase();
 
       const matchesSearch = product.name
         .toLowerCase()
@@ -342,27 +357,36 @@ function Dashboard() {
           <section className="min-w-0">
             <div className="mb-6 flex flex-wrap items-center justify-between gap-4">
               <div>
-                <h1 className="text-2xl font-bold sm:text-3xl">
-                  Dashboard
-                </h1>
+                <h1 className="text-2xl font-bold sm:text-3xl">Dashboard</h1>
                 <p className="mt-2 text-sm text-gray-500">
                   {filteredProducts.length} products found
                 </p>
               </div>
 
-              <label className="flex items-center gap-2 rounded-xl border border-gray-200 bg-white px-3 py-2.5 text-sm">
-                <span className="text-gray-500">Sort:</span>
-                <select
-                  value={sort}
-                  onChange={(event) => setSort(event.target.value)}
-                  className="max-w-[150px] bg-transparent outline-none"
-                >
-                  <option>Newest</option>
-                  <option>Price: Low to High</option>
-                  <option>Price: High to Low</option>
-                </select>
-                <LuChevronDown size={15} />
-              </label>
+              <div className="flex flex-wrap items-center gap-3">
+                <input
+                  type="search"
+                  value={search}
+                  onChange={(event) => setSearch(event.target.value)}
+                  placeholder="Search products..."
+                  aria-label="Search products"
+                  className="w-full rounded-xl border border-gray-200 bg-white px-3 py-2.5 text-sm outline-none focus:border-green-700 sm:w-48"
+                />
+
+                <label className="flex items-center gap-2 rounded-xl border border-gray-200 bg-white px-3 py-2.5 text-sm">
+                  <span className="text-gray-500">Sort:</span>
+                  <select
+                    value={sort}
+                    onChange={(event) => setSort(event.target.value)}
+                    className="max-w-[150px] bg-transparent outline-none"
+                  >
+                    <option>Newest</option>
+                    <option>Price: Low to High</option>
+                    <option>Price: High to Low</option>
+                  </select>
+                  <LuChevronDown size={15} />
+                </label>
+              </div>
             </div>
 
             {filteredProducts.length === 0 ? (
@@ -439,9 +463,7 @@ function Dashboard() {
                               <LuMinus size={13} />
                             </button>
 
-                            <span className="text-xs">
-                              {cart[product.id]}
-                            </span>
+                            <span className="text-xs">{cart[product.id]}</span>
                           </>
                         )}
 
