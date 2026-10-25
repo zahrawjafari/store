@@ -11,10 +11,12 @@ import {
 } from "react-icons/fa";
 
 type Product = {
-  id: string;
-  title: string;
+  id: string | number;
+  title?: string;
+  name?: string;
   price: number;
   image?: string;
+  thumbnail?: string;
 };
 
 type CartItem = {
@@ -29,6 +31,7 @@ const Header = () => {
   const [cart, setCart] = useState<Record<string, number>>({});
   const [products, setProducts] = useState<Product[]>([]);
   const [cartOpen, setCartOpen] = useState(false);
+  const [search, setSearch] = useState("");
   const navigate = useNavigate();
 
   const readCart = () => {
@@ -54,10 +57,12 @@ const Header = () => {
 
     window.addEventListener("instantmart-cart-updated", update);
     window.addEventListener("storage", update);
+    window.addEventListener("instantmart-products-updated", update);
 
     return () => {
       window.removeEventListener("instantmart-cart-updated", update);
       window.removeEventListener("storage", update);
+      window.removeEventListener("instantmart-products-updated", update);
     };
   }, []);
 
@@ -89,7 +94,7 @@ const Header = () => {
   const cartItems: CartItem[] = Object.entries(cart)
     .filter(([, quantity]) => quantity > 0)
     .map(([id, quantity]) => {
-      const product = products.find((item) => String(item.id) === id);
+      const product = products.find((item) => String(item.id) === String(id));
 
       return product ? { product, quantity } : null;
     })
@@ -105,10 +110,19 @@ const Header = () => {
     0,
   );
 
+  const handleSearch = (event: React.FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    const query = search.trim();
+
+    navigate(
+      query ? `/dashboard?search=${encodeURIComponent(query)}` : "/dashboard",
+    );
+  };
+
   return (
     <>
       <header className="fixed left-0 top-0 z-50 w-full">
-        <div className="hidden h-[36px] w-full items-center justify-between bg-linear-to-r from-green-950 via-green-700 to-green-950 px-4 text-white sm:flex sm:px-6 lg:px-10">
+        <div className="hidden h-[36px] w-full items-center justify-between bg-gradient-to-r from-green-950 via-green-700 to-green-950 px-4 text-white sm:flex sm:px-6 lg:px-10">
           <h4 className="text-xs sm:text-sm">
             This is a sample UI platform designed exclusively for testing and
             demo.
@@ -147,14 +161,19 @@ const Header = () => {
             </Link>
           </nav>
 
-          <div className="hidden h-[36px] w-[240px] items-center rounded-full border border-amber-300 bg-amber-50 px-3 lg:flex xl:w-[384px]">
-            <FaSearch size={14} className="mr-3 text-gray-500" />
+          <form
+            onSubmit={handleSearch}
+            className="hidden h-[36px] w-[240px] items-center rounded-full border border-amber-300 bg-amber-50 px-3 lg:flex xl:w-[384px]"
+          >
+            <FaSearch size={14} className="mr-3 shrink-0 text-gray-500" />
             <input
-              type="text"
+              value={search}
+              onChange={(event) => setSearch(event.target.value)}
+              type="search"
               placeholder="Search for groceries..."
               className="w-full bg-transparent text-sm text-gray-700 outline-none"
             />
-          </div>
+          </form>
 
           <div className="flex items-center gap-4">
             <button
@@ -181,6 +200,8 @@ const Header = () => {
         </div>
       </header>
 
+      <div className="h-[100px] sm:h-[100px]" />
+
       {cartOpen && (
         <div className="fixed inset-0 z-[60]">
           <button
@@ -200,11 +221,12 @@ const Header = () => {
                   {displayedCount} items in your cart
                 </p>
               </div>
+
               <button
                 type="button"
                 onClick={() => setCartOpen(false)}
                 className="text-2xl text-gray-500 hover:text-gray-900"
-                aria-label="Close"
+                aria-label="Close cart"
               >
                 ×
               </button>
@@ -223,9 +245,8 @@ const Header = () => {
                 </div>
               ) : cartItems.length === 0 ? (
                 <p className="text-sm leading-6 text-gray-500">
-                  Cart quantities are saved, but product details are not
-                  available yet. Make sure Dashboard saves the product catalog
-                  under <code>instantmart-products</code>.
+                  Product details are unavailable. Check the product catalog
+                  saved in localStorage.
                 </p>
               ) : (
                 <div className="space-y-5">
@@ -235,10 +256,10 @@ const Header = () => {
                       className="flex gap-3 border-b border-gray-100 pb-5"
                     >
                       <div className="flex h-20 w-20 shrink-0 items-center justify-center overflow-hidden rounded-xl bg-amber-50">
-                        {product.image ? (
+                        {product.image || product.thumbnail ? (
                           <img
-                            src={product.image}
-                            alt={product.title}
+                            src={product.image || product.thumbnail}
+                            alt={product.title || product.name || "Product"}
                             className="h-full w-full object-cover"
                           />
                         ) : (
@@ -248,7 +269,7 @@ const Header = () => {
 
                       <div className="min-w-0 flex-1">
                         <h3 className="truncate font-semibold text-gray-900">
-                          {product.title}
+                          {product.title || product.name || "Product"}
                         </h3>
                         <p className="mt-1 text-sm text-gray-500">
                           ${product.price.toFixed(2)} / item
@@ -290,7 +311,7 @@ const Header = () => {
                         <button
                           type="button"
                           onClick={() => removeProduct(String(product.id))}
-                          aria-label={`Remove ${product.title}`}
+                          aria-label={`Remove ${product.title || product.name || "product"}`}
                           className="p-2 text-red-500 hover:text-red-700"
                         >
                           <FaTrash size={14} />
